@@ -4,7 +4,6 @@
 
 int main()
 {
-
     sSTL::vector<int> vec2 {10};
 
     for (size_t i = 0; i < vec2.size(); ++i)
