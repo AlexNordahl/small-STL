@@ -3,5 +3,5 @@
 
 TEST(Check, TrueIsTrue) 
 {
-    
+    EXPECT_TRUE(true);
 }

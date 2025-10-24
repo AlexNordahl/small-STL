@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <initializer_list>
+#include <utility>
 
 namespace sSTL
 {
@@ -10,6 +11,8 @@ namespace sSTL
     class vector
     {
     public:
+        vector() = default;
+
         vector(size_t size)
             : m_size {size}, m_capacity {size}
         {
@@ -34,11 +37,29 @@ namespace sSTL
             }
         }
         
-        T& at(size_t index) 
-        { 
-            return m_memory[index]; 
-        };
+        vector(vector& other)
+        {
+            copy_from(other);
+        }
 
+        vector(vector&& other)
+        {
+            move_from(other);
+        }
+
+        vector& operator=(vector& other)
+        {
+            copy_from(other);
+            return *this;
+        }
+
+        vector& operator=(vector&& other)
+        {
+            move_from(other);
+            return *this;
+        }
+
+        T& at(size_t index) { return m_memory[index]; };
         T& operator[] (size_t index) { return m_memory[index]; };
 
         size_t size() const { return m_size; };
@@ -88,6 +109,39 @@ namespace sSTL
         T* m_memory {};
         static constexpr size_t max_size {1'000'000};
         static constexpr int growth_rate {2};
+
+        void copy_from(vector& other)
+        {
+            Allocator allocator;
+            T* new_memory = allocator.allocate(other.m_capacity);
+
+            for (size_t i = 0; i < other.m_size; ++i)
+                allocator.construct(&m_memory[i], other.m_memory[i]);
+
+            if (m_memory != nullptr)
+            {
+                for (size_t i = 0; i < m_size; ++i)
+                {
+                    allocator.destroy(&m_memory[i]);
+                }
+                allocator.deallocate(m_memory, m_capacity);
+            }
+
+            m_memory = new_memory;
+            m_size = other.m_size;
+            m_capacity = other.m_capacity;
+        }
+
+        void move_from(vector& other)
+        {
+            m_memory = other.m_memory;
+            m_size = other.m_size;
+            m_capacity = other.m_capacity;
+            
+            other.m_memory = nullptr;
+            other.m_size = 0;
+            other.m_capacity = 0;
+        }
     };
 }
 
