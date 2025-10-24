@@ -38,24 +38,34 @@ namespace sSTL
             }
         }
         
-        vector(vector& other)
+        vector(const vector& other)
         {
             copy_from(other);
         }
-
+        
         vector(vector&& other)
         {
             move_from(other);
         }
 
-        vector& operator=(vector& other)
+        vector& operator=(const vector& other)
         {
+            if (this == &other) 
+                return *this;
+
             copy_from(other);
             return *this;
         }
 
         vector& operator=(vector&& other)
         {
+            Allocator allocator;
+            for (size_t i = 0; i < m_size; ++i)
+                allocator.destroy(&m_memory[i]);
+            
+            if (m_memory)
+                allocator.deallocate(m_memory, m_capacity); 
+
             move_from(other);
             return *this;
         }
@@ -92,7 +102,7 @@ namespace sSTL
         void pop_back()
         {
             Allocator allocator;
-            allocator.destroy(&m_memory[m_size--]);
+            allocator.destroy(&m_memory[--m_size]);
         }
 
         void shrink_to_fit()
@@ -111,11 +121,14 @@ namespace sSTL
                 allocator.construct(&new_memory[i], m_memory[i]);
             }
 
-            for (size_t i = 0; i < m_size; ++i)
+            if (m_memory)
             {
-                allocator.destroy(&m_memory[i]);
+                for (size_t i = 0; i < m_size; ++i)
+                {
+                    allocator.destroy(&m_memory[i]);
+                }
+                allocator.deallocate(m_memory, m_capacity);
             }
-            allocator.deallocate(m_memory, m_capacity);
             
             m_memory = new_memory;
             m_capacity = capacity;
@@ -138,13 +151,13 @@ namespace sSTL
         static constexpr size_t max_size {1'000'000};
         static constexpr int growth_rate {2};
 
-        void copy_from(vector& other)
+        void copy_from(const vector& other)
         {
             Allocator allocator;
             T* new_memory = allocator.allocate(other.m_capacity);
 
             for (size_t i = 0; i < other.m_size; ++i)
-                allocator.construct(&m_memory[i], other.m_memory[i]);
+                allocator.construct(&new_memory[i], other.m_memory[i]);
 
             if (m_memory != nullptr)
             {
