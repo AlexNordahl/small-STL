@@ -4,6 +4,7 @@
 #include <memory>
 #include <initializer_list>
 #include <utility>
+#include <stdexcept>
 
 namespace sSTL
 {
@@ -59,7 +60,15 @@ namespace sSTL
             return *this;
         }
 
-        T& at(size_t index) { return m_memory[index]; };
+        T& at(size_t index)
+        { 
+            if (index >= m_size)
+            {
+                throw std::out_of_range("Given index is too big\n");
+            }
+            return m_memory[index]; 
+        };
+
         T& operator[] (size_t index) { return m_memory[index]; };
 
         size_t size() const { return m_size; };
@@ -75,14 +84,33 @@ namespace sSTL
             }
 
             size_t new_capacity {m_capacity == 0 ? 1 : m_size * growth_rate};
-            T* new_memory = allocator.allocate(new_capacity);
+            reserve(new_capacity);
+            
+            allocator.construct(&m_memory[m_size++], element);
+        }
+
+        void pop_back()
+        {
+            Allocator allocator;
+            allocator.destroy(&m_memory[m_size--]);
+        }
+
+        void shrink_to_fit()
+        {
+            reserve(m_size);
+        }
+
+        void reserve(size_t capacity)
+        {
+            Allocator allocator;
+
+            T* new_memory = allocator.allocate(capacity);
 
             for (size_t i = 0; i < m_size; ++i)
             {
                 allocator.construct(&new_memory[i], m_memory[i]);
             }
-            allocator.construct(&new_memory[m_size++], element);
-            
+
             for (size_t i = 0; i < m_size; ++i)
             {
                 allocator.destroy(&m_memory[i]);
@@ -90,7 +118,7 @@ namespace sSTL
             allocator.deallocate(m_memory, m_capacity);
             
             m_memory = new_memory;
-            m_capacity = new_capacity;
+            m_capacity = capacity;
         }
 
         ~vector() 
@@ -137,7 +165,7 @@ namespace sSTL
             m_memory = other.m_memory;
             m_size = other.m_size;
             m_capacity = other.m_capacity;
-            
+
             other.m_memory = nullptr;
             other.m_size = 0;
             other.m_capacity = 0;
