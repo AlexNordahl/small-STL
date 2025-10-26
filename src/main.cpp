@@ -3,12 +3,9 @@
 #include <array>
 #include "../project-headers/vector.h"
 #include "../project-headers/array.h"
+#include "../project-headers/unique_ptr.h"
 
 int main()
 {
-    sSTL::array<int, 5> arr {1, 2, 3, 4, 5};
-
-    std::cout << arr.at(3) << "\n";
-    std::cout << arr.empty() << "\n";
-    std::cout << arr.size() << "\n";
+    sSTL::unique_ptr<int> (new int (10));
 }
