@@ -14,7 +14,7 @@ namespace sSTL
         unique_ptr(const unique_ptr&) = delete;
         unique_ptr& operator=(const unique_ptr&) = delete;
 
-        unique_ptr(const unique_ptr&& other)
+        unique_ptr(unique_ptr&& other)
         {
             m_resource = other.m_resource;
             other.m_resource = nullptr;
@@ -45,28 +45,26 @@ namespace sSTL
             clear();
             m_resource = resource;
         }
+        
+        T* get() { return m_resource; }
+        
+        bool isHolding() { return get() != nullptr;}
+        
+        explicit operator bool() { return isHolding(); }
+        
+        T& operator* () { return *m_resource; }
+        T* operator-> () { return m_resource; }
+        
+        ~unique_ptr() { clear(); }
 
-        void clear()
+        private:
+        T* m_resource {};
+
+        void clear() // Leaves m_resource in unspecified state
         {
             Deleter deleter;
             deleter(m_resource);
         }
-
-        T* get() { return m_resource; }
-
-        bool isHolding() { return get() != nullptr;}
-
-        explicit operator bool() { return isHolding(); }
-
-        T& operator* () { return *m_resource; }
-        T* operator-> () { return m_resource; }
-
-        ~unique_ptr()
-        {
-            clear();
-        }
-    private:
-        T* m_resource {};
     };
 }
 
