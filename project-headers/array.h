@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <initializer_list>
+#include <stdexcept>
 
 namespace sSTL
 {
@@ -10,6 +11,13 @@ namespace sSTL
     struct array
     {
         T m_array[N];
+
+        T& at(std::size_t index)
+        {
+            return const_cast<T&>(
+                static_cast<const array*>(this)->at(index)
+            );
+        }
 
         const T& at(std::size_t index) const
         {
@@ -19,12 +27,6 @@ namespace sSTL
             return m_array[index];
         }
 
-        T& at(std::size_t index)
-        {
-            return const_cast<T&>(
-                static_cast<const array*>(this)->at(index)
-            );
-        }
 
         T& operator[] (std::size_t index) { return m_array[index]; }
 

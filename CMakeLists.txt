@@ -18,6 +18,7 @@ if (BUILD_TESTS)
 
     add_executable(${PROJECT_NAME}_tests
       tests/vector_tests.cpp
+      tests/array_tests.cpp
     )
     target_link_libraries(${PROJECT_NAME}_tests PRIVATE GTest::gtest_main)
 
