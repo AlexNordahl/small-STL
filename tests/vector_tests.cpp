@@ -81,6 +81,16 @@ TEST(VectorReserve, IncreasesCapacityWithoutChangingSizeOrValues)
     EXPECT_EQ(v[2], 3);
 }
 
+TEST(VectorShrinkToFit, BasicShrink)
+{
+    sSTL::vector<int> v{1, 2, 3};
+    v.pop_back();
+    v.shrink_to_fit();
+    EXPECT_EQ(v.capacity(), v.size());
+    EXPECT_EQ(v[0], 1);
+    EXPECT_EQ(v[1], 2);
+}
+
 TEST(VectorMoveSemantics, MoveConstructorTransfersOwnership)
 {
     sSTL::vector<int> src{1, 2, 3, 4};
@@ -105,6 +115,20 @@ TEST(VectorMoveSemantics, MoveAssignmentTransfersOwnership)
     ASSERT_EQ(b.size(), 2);
     EXPECT_EQ(b[0], 7);
     EXPECT_EQ(b[1], 8);
+
+    EXPECT_EQ(a.size(), 0);
+    EXPECT_EQ(a.capacity(), 0);
+}
+
+TEST(VectorMoveSemantics, CheckIfDataIsProperlyDeallocated)
+{
+    sSTL::vector<int> a{1, 2};
+    sSTL::vector<int> b{3, 4, 5};
+    b = std::move(a);
+
+    ASSERT_EQ(b.size(), 2);
+    EXPECT_EQ(b[0], 1);
+    EXPECT_EQ(b[1], 2);
 
     EXPECT_EQ(a.size(), 0);
     EXPECT_EQ(a.capacity(), 0);

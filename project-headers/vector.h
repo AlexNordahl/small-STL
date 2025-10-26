@@ -19,10 +19,8 @@ namespace sSTL
         {
             Allocator allocator;
             m_memory = allocator.allocate(m_capacity);
-            for (size_t i = 0; i < m_size; ++i)
-            {
+            for (size_t i {}; i < m_size; ++i)
                 allocator.construct(&m_memory[i], T{});
-            }
         }
 
         vector(std::initializer_list<T> list)
@@ -33,9 +31,7 @@ namespace sSTL
 
             size_t i {};
             for (const auto& item : list)
-            {
                 allocator.construct(&m_memory[i++], item);
-            }
         }
         
         vector(const vector& other)
@@ -59,14 +55,9 @@ namespace sSTL
 
         vector& operator=(vector&& other)
         {
-            Allocator allocator;
-            for (size_t i = 0; i < m_size; ++i)
-                allocator.destroy(&m_memory[i]);
-            
-            if (m_memory)
-                allocator.deallocate(m_memory, m_capacity); 
-
+            free_currrent_memory();
             move_from(other);
+
             return *this;
         }
 
@@ -86,6 +77,9 @@ namespace sSTL
 
         void push_back(const T& element)
         {
+            if (m_size == max_size())
+                return;
+
             Allocator allocator;
             if (m_size < m_capacity)
             {
@@ -93,7 +87,7 @@ namespace sSTL
                 return;
             }
 
-            size_t new_capacity {m_capacity == 0 ? 1 : m_size * growth_rate};
+            size_t new_capacity {m_capacity == 0 ? 1 : m_size * growth_rate()};
             reserve(new_capacity);
             
             allocator.construct(&m_memory[m_size++], element);
@@ -112,32 +106,36 @@ namespace sSTL
 
         void reserve(size_t capacity)
         {
-            Allocator allocator;
+            if (capacity < m_size)
+                return;
 
+            Allocator allocator;
             T* new_memory = allocator.allocate(capacity);
 
-            for (size_t i = 0; i < m_size; ++i)
-            {
+            for (size_t i {}; i < m_size; ++i)
                 allocator.construct(&new_memory[i], m_memory[i]);
-            }
 
-            if (m_memory)
-            {
-                for (size_t i = 0; i < m_size; ++i)
-                {
-                    allocator.destroy(&m_memory[i]);
-                }
-                allocator.deallocate(m_memory, m_capacity);
-            }
+            free_currrent_memory();
             
             m_memory = new_memory;
             m_capacity = capacity;
         }
 
+        void clear()
+        {
+            if (!m_size)
+                return;
+
+            Allocator allocator;
+            for (size_t i {}; i < m_size; ++i)
+                allocator.destroy(&m_memory[i]);
+            m_size = 0;
+        }
+
         ~vector() 
         { 
             Allocator allocator;
-            for (size_t i = 0; i < m_size; ++i)
+            for (size_t i {}; i < m_size; ++i)
                 allocator.destroy(&m_memory[i]);
             
             if (m_memory)
@@ -148,29 +146,20 @@ namespace sSTL
         size_t m_size {};
         size_t m_capacity {};
         T* m_memory {};
-        static constexpr size_t max_size {1'000'000};
-        static constexpr int growth_rate {2};
 
         void copy_from(const vector& other)
         {
             Allocator allocator;
             T* new_memory = allocator.allocate(other.m_capacity);
 
-            for (size_t i = 0; i < other.m_size; ++i)
+            for (size_t i {}; i < other.m_size; ++i)
                 allocator.construct(&new_memory[i], other.m_memory[i]);
 
-            if (m_memory != nullptr)
-            {
-                for (size_t i = 0; i < m_size; ++i)
-                {
-                    allocator.destroy(&m_memory[i]);
-                }
-                allocator.deallocate(m_memory, m_capacity);
-            }
+            free_currrent_memory();
 
             m_memory = new_memory;
-            m_size = other.m_size;
             m_capacity = other.m_capacity;
+            m_size = other.m_size;
         }
 
         void move_from(vector& other)
@@ -183,6 +172,22 @@ namespace sSTL
             other.m_size = 0;
             other.m_capacity = 0;
         }
+
+        void free_currrent_memory()
+        {
+            if (m_memory)
+            {
+                Allocator allocator;
+                for (size_t i {}; i < m_size; ++i)
+                    allocator.destroy(&m_memory[i]);
+                allocator.deallocate(m_memory, m_capacity);
+            }
+        }
+
+        size_t max_size() const { return 1'000'000; }
+
+        size_t growth_rate() const { return 2; }
+
     };
 }
 
