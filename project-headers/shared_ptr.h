@@ -65,6 +65,9 @@ namespace sSTL
             if (this == &other)
                 return *this;
 
+            if (m_block_ptr && m_block_ptr->m_count.fetch_sub(1) == 1)
+                delete m_block_ptr;
+
             m_ptr = other.m_ptr;
             m_block_ptr = other.m_block_ptr;
             
@@ -74,10 +77,34 @@ namespace sSTL
             return *this;
         }
 
+        void reset()
+        {
+            if (m_block_ptr and m_block_ptr->m_count.fetch_sub(1) == 1)
+                delete m_block_ptr;
+
+            m_block_ptr = nullptr;
+            m_ptr = nullptr;
+        }
+
+        void reset(T* other_ptr)
+        {
+            if (m_block_ptr and m_block_ptr->m_count.fetch_sub(1) == 1)
+                delete m_block_ptr;
+
+            m_block_ptr = new c_block<T> {};
+            m_ptr = other_ptr;
+            
+            m_block_ptr->m_count.store(1);
+            m_block_ptr->m_ref = m_ptr;
+        }
+
         T* get()
         {
             return m_ptr;
         }
+
+        T& operator* () { return *m_ptr; }
+        T* operator-> () { return m_ptr; }
         
         std::size_t use_count() 
         { 
@@ -86,6 +113,8 @@ namespace sSTL
             
             return m_block_ptr->m_count.load(); 
         }
+
+        explicit operator bool() { return m_block_ptr == nullptr; }
 
         ~shared_ptr()
         {

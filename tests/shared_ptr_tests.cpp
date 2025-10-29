@@ -94,6 +94,25 @@ TEST(SharedPtrMove, MoveAssignmentTransfersOwnershipSafely)
     EXPECT_EQ(*b.get(), 10);
 }
 
+TEST(SharedPtrReset, BasicReset)
+{
+    sSTL::shared_ptr<int> sptr {new int {10}};
+    sptr.reset();
+
+    EXPECT_EQ(sptr.use_count(), 0);
+    EXPECT_EQ(sptr.get(), nullptr);
+}
+
+TEST(SharedPtrReset, BasicResetWithNew)
+{
+    sSTL::shared_ptr<int> sptr {new int {10}};
+    sptr.reset(new int {222});
+
+    EXPECT_EQ(sptr.use_count(), 1);
+    EXPECT_EQ(*sptr.get(), 222);
+}
+
+
 TEST(SharedPtrGet, BasicGet)
 {
     sSTL::shared_ptr<int> sptr {new int {10}};
@@ -113,7 +132,7 @@ TEST(SharedPtrGet, BasicGetObject)
 
 TEST(SharedPtrScopes, CountsDecreaseOnScopeExit)
 {
-    sSTL::shared_ptr<int> root{new int{42}};
+    sSTL::shared_ptr<int> root {new int{42}};
     EXPECT_EQ(root.use_count(), 1);
 
     {
@@ -132,4 +151,38 @@ TEST(SharedPtrScopes, CountsDecreaseOnScopeExit)
 
     EXPECT_EQ(root.use_count(), 1);
     EXPECT_EQ(*root.get(), 42);
+}
+
+TEST(SharedPtrOperator, DereferenceOperator)
+{
+    sSTL::shared_ptr<int> ptr(new int(42));
+
+    EXPECT_EQ(*ptr, 42);
+}
+
+TEST(SharedPtrOperator, ArrowOperator)
+{
+    struct TestStruct
+    {
+        int x = 10;
+        int y = 20;
+
+        int sum() const { return x + y; }
+    };
+
+    sSTL::shared_ptr<TestStruct> ptr(new TestStruct());
+
+
+    EXPECT_EQ(ptr->x, 10);
+    EXPECT_EQ(ptr->y, 20);
+    EXPECT_EQ(ptr->sum(), 30);
+}
+
+TEST(SharedPtrOperator, BoolOperator)
+{
+    sSTL::shared_ptr<int> ptr1 (new int {10});
+    sSTL::shared_ptr<int> ptr2 {};
+
+    EXPECT_EQ(static_cast<bool>(ptr1), false);
+    EXPECT_EQ(static_cast<bool>(ptr2), true);
 }

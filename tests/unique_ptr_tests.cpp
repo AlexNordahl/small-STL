@@ -41,6 +41,8 @@ TEST(UniquePtrMethods, Release)
 
     EXPECT_EQ(uptr.get(), nullptr);
     EXPECT_EQ(*number_ptr, 10);
+
+    delete number_ptr;
 }
 
 TEST(UniquePtrMethods, Reset)
