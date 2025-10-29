@@ -35,6 +35,45 @@ namespace sSTL
             m_block_ptr->m_count.fetch_add(1);
         }
 
+        shared_ptr& operator= (const shared_ptr& other)
+        {
+            if (this == &other)
+                return *this;
+
+            if (m_block_ptr and m_block_ptr->m_count.fetch_sub(1) == 1)
+                delete m_block_ptr;
+
+            m_ptr = other.m_ptr;
+            m_block_ptr = other.m_block_ptr;
+            if (m_block_ptr)
+                m_block_ptr->m_count.fetch_add(1);
+
+            return *this;
+        }
+
+        shared_ptr(shared_ptr&& other)
+        {
+            m_ptr = other.m_ptr;
+            m_block_ptr = other.m_block_ptr;
+            
+            other.m_ptr = nullptr;
+            other.m_block_ptr = nullptr;
+        }
+
+        shared_ptr& operator= (shared_ptr&& other)
+        {
+            if (this == &other)
+                return *this;
+
+            m_ptr = other.m_ptr;
+            m_block_ptr = other.m_block_ptr;
+            
+            other.m_ptr = nullptr;
+            other.m_block_ptr = nullptr;
+
+            return *this;
+        }
+
         T* get()
         {
             return m_ptr;
