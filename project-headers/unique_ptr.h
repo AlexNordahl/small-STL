@@ -6,7 +6,7 @@
 namespace sSTL
 {
     template<typename T, typename Deleter = std::default_delete<T>>
-    class unique_ptr
+    class unique_ptr final
     {
     public:
         unique_ptr(T* resource = nullptr) { m_resource = resource; }

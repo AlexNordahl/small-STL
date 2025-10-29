@@ -5,21 +5,22 @@
 #include <initializer_list>
 #include <utility>
 #include <stdexcept>
+#include <cstddef>
 
 namespace sSTL
 {
     template<typename T, typename Allocator = std::allocator<T>>
-    class vector
+    class vector final
     {
     public:
         vector() = default;
 
-        vector(size_t size)
+        vector(std::size_t size)
             : m_size {size}, m_capacity {size}
         {
             Allocator allocator;
             m_memory = allocator.allocate(m_capacity);
-            for (size_t i {}; i < m_size; ++i)
+            for (std::size_t i {}; i < m_size; ++i)
                 allocator.construct(&m_memory[i], T{});
         }
 
@@ -29,7 +30,7 @@ namespace sSTL
             Allocator allocator;
             m_memory = allocator.allocate(m_capacity);
 
-            size_t i {};
+            std::size_t i {};
             for (const auto& item : list)
                 allocator.construct(&m_memory[i++], item);
         }
@@ -61,7 +62,7 @@ namespace sSTL
             return *this;
         }
 
-        T& at(size_t index)
+        T& at(std::size_t index)
         { 
             if (index >= m_size)
             {
@@ -70,10 +71,10 @@ namespace sSTL
             return m_memory[index]; 
         };
 
-        T& operator[] (size_t index) { return m_memory[index]; };
+        T& operator[] (std::size_t index) { return m_memory[index]; };
 
-        size_t size() const { return m_size; };
-        size_t capacity() const { return m_capacity; };
+        std::size_t size() const { return m_size; };
+        std::size_t capacity() const { return m_capacity; };
 
         void push_back(const T& element)
         {
@@ -87,7 +88,7 @@ namespace sSTL
                 return;
             }
 
-            size_t new_capacity {m_capacity == 0 ? 1 : m_size * growth_rate()};
+            std::size_t new_capacity {m_capacity == 0 ? 1 : m_size * growth_rate()};
             reserve(new_capacity);
             
             allocator.construct(&m_memory[m_size++], element);
@@ -104,7 +105,7 @@ namespace sSTL
             reserve(m_size);
         }
 
-        void reserve(size_t capacity)
+        void reserve(std::size_t capacity)
         {
             if (capacity < m_size)
                 return;
@@ -112,7 +113,7 @@ namespace sSTL
             Allocator allocator;
             T* new_memory = allocator.allocate(capacity);
 
-            for (size_t i {}; i < m_size; ++i)
+            for (std::size_t i {}; i < m_size; ++i)
                 allocator.construct(&new_memory[i], m_memory[i]);
 
             free_currrent_memory();
@@ -127,7 +128,7 @@ namespace sSTL
                 return;
 
             Allocator allocator;
-            for (size_t i {}; i < m_size; ++i)
+            for (std::size_t i {}; i < m_size; ++i)
                 allocator.destroy(&m_memory[i]);
             m_size = 0;
         }
@@ -135,7 +136,7 @@ namespace sSTL
         ~vector() 
         { 
             Allocator allocator;
-            for (size_t i {}; i < m_size; ++i)
+            for (std::size_t i {}; i < m_size; ++i)
                 allocator.destroy(&m_memory[i]);
             
             if (m_memory)
@@ -143,8 +144,8 @@ namespace sSTL
         };
 
     private:
-        size_t m_size {};
-        size_t m_capacity {};
+        std::size_t m_size {};
+        std::size_t m_capacity {};
         T* m_memory {};
 
         void copy_from(const vector& other)
@@ -152,7 +153,7 @@ namespace sSTL
             Allocator allocator;
             T* new_memory = allocator.allocate(other.m_capacity);
 
-            for (size_t i {}; i < other.m_size; ++i)
+            for (std::size_t i {}; i < other.m_size; ++i)
                 allocator.construct(&new_memory[i], other.m_memory[i]);
 
             free_currrent_memory();
@@ -178,15 +179,15 @@ namespace sSTL
             if (m_memory)
             {
                 Allocator allocator;
-                for (size_t i {}; i < m_size; ++i)
+                for (std::size_t i {}; i < m_size; ++i)
                     allocator.destroy(&m_memory[i]);
                 allocator.deallocate(m_memory, m_capacity);
             }
         }
 
-        size_t max_size() const { return 1'000'000; }
+        std::size_t max_size() const { return 1'000'000; }
 
-        size_t growth_rate() const { return 2; }
+        std::size_t growth_rate() const { return 2; }
 
     };
 }

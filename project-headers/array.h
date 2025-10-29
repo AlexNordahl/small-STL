@@ -8,7 +8,7 @@
 namespace sSTL
 {
     template<typename T, std::size_t N>
-    struct array
+    struct array final
     {
         T m_array[N];
 
@@ -50,7 +50,7 @@ namespace sSTL
 
         void fill(T value)
         {
-            for (size_t i {}; i < N; ++i)
+            for (std::size_t i {}; i < N; ++i)
                 m_array[i] = value;
         }
     };
