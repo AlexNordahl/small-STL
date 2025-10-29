@@ -9,52 +9,46 @@ namespace sSTL
     template<typename T>
     struct c_block
     {
-        std::atomic<long> m_count {};
+        T* m_ref {};
+        std::atomic<size_t> m_count {};
+
+        ~c_block() { delete m_ref; }
     };
 
     template<typename T>
     class shared_ptr
     {
     public:
-        shared_ptr()
-        {
-            std::cout << "Default Ctor Called\n";
-            m_block_ptr = new c_block<T> {};
-        }
+        shared_ptr() = default;
 
         shared_ptr(T* ptr)
-            : shared_ptr()
+            : m_block_ptr {new c_block<T> {}}, m_ptr {ptr}
         {
-            std::cout << "Parametrized Ctor Called\n";
-            // m_block_ptr->m_ref = ptr;
-            m_block_ptr->m_count++;
+            m_block_ptr->m_ref = ptr;
+            m_block_ptr->m_count.store(1);
         }
 
-        shared_ptr(shared_ptr& other)
+        shared_ptr(const shared_ptr& other)
         {
-            std::cout << "Copy Ctor Called\n";
             m_ptr = other.m_ptr;
             m_block_ptr = other.m_block_ptr;
-            m_block_ptr->m_count++;
+            m_block_ptr->m_count.fetch_add(1);
         }
         
         std::size_t use_count() 
         { 
-            return m_block_ptr->m_count; 
+            return m_block_ptr->m_count.load(); 
         }
 
         ~shared_ptr()
         {
-            std::cout << "Destructor Called\n";
-            if (m_block_ptr->m_count == 1)
+            if (m_block_ptr and m_block_ptr->m_count.fetch_sub(1) == 1)
                 delete m_block_ptr;
-            else
-                m_block_ptr->m_count--;
         }
 
     private:
-        T* m_ptr {};
         c_block<T>* m_block_ptr {};
+        T* m_ptr {};
     };
 }
 
