@@ -9,8 +9,10 @@
 int main() 
 {
     int* resource = new int {10};
-    std::shared_ptr<int> ptr1 {resource};
-    std::shared_ptr<int> ptr2 {ptr1};
+    sSTL::shared_ptr<int> ptr1 {resource};
+    sSTL::shared_ptr<int> ptr2 {ptr1};
+    sSTL::shared_ptr<int> ptr3 {ptr2};
     std::cout << ptr1.use_count() << "\n";
-    std::cout << sizeof(std::shared_ptr<int>) << "\n";
+    std::cout << ptr2.use_count() << "\n";
+    std::cout << ptr2.use_count() << "\n";
 }
