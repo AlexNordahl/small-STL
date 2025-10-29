@@ -20,6 +20,7 @@ if (BUILD_TESTS)
       tests/vector_tests.cpp
       tests/array_tests.cpp
       tests/unique_ptr_tests.cpp
+      tests/shared_ptr_tests.cpp
     )
     target_link_libraries(${PROJECT_NAME}_tests PRIVATE GTest::gtest_main)
 

@@ -34,9 +34,17 @@ namespace sSTL
             m_block_ptr = other.m_block_ptr;
             m_block_ptr->m_count.fetch_add(1);
         }
+
+        T* get()
+        {
+            return m_ptr;
+        }
         
         std::size_t use_count() 
         { 
+            if (m_block_ptr == nullptr)
+                return 0;
+            
             return m_block_ptr->m_count.load(); 
         }
 
