@@ -9,10 +9,7 @@ namespace sSTL
     template<typename T>
     struct c_block
     {
-        T* m_ref {};
         std::atomic<size_t> m_count {};
-
-        ~c_block() { delete m_ref; }
     };
 
     template<typename T>
@@ -22,11 +19,8 @@ namespace sSTL
         shared_ptr() = default;
 
         shared_ptr(T* ptr)
-            : m_block_ptr {new c_block<T> {}}, m_ptr {ptr}
-        {
-            m_block_ptr->m_ref = ptr;
-            m_block_ptr->m_count.store(1);
-        }
+            : m_block_ptr {new c_block<T> {}}, m_ptr {ptr} 
+        { m_block_ptr->m_count.store(1); }
 
         shared_ptr(const shared_ptr& other)
         {
@@ -40,8 +34,7 @@ namespace sSTL
             if (this == &other)
                 return *this;
 
-            if (m_block_ptr and m_block_ptr->m_count.fetch_sub(1) == 1)
-                delete m_block_ptr;
+            clear();
 
             m_ptr = other.m_ptr;
             m_block_ptr = other.m_block_ptr;
@@ -65,8 +58,7 @@ namespace sSTL
             if (this == &other)
                 return *this;
 
-            if (m_block_ptr && m_block_ptr->m_count.fetch_sub(1) == 1)
-                delete m_block_ptr;
+            clear();
 
             m_ptr = other.m_ptr;
             m_block_ptr = other.m_block_ptr;
@@ -79,8 +71,7 @@ namespace sSTL
 
         void reset()
         {
-            if (m_block_ptr and m_block_ptr->m_count.fetch_sub(1) == 1)
-                delete m_block_ptr;
+            clear();
 
             m_block_ptr = nullptr;
             m_ptr = nullptr;
@@ -88,20 +79,15 @@ namespace sSTL
 
         void reset(T* other_ptr)
         {
-            if (m_block_ptr and m_block_ptr->m_count.fetch_sub(1) == 1)
-                delete m_block_ptr;
+            clear();
 
             m_block_ptr = new c_block<T> {};
             m_ptr = other_ptr;
             
             m_block_ptr->m_count.store(1);
-            m_block_ptr->m_ref = m_ptr;
         }
 
-        T* get()
-        {
-            return m_ptr;
-        }
+        T* get() { return m_ptr; }
 
         T& operator* () { return *m_ptr; }
         T* operator-> () { return m_ptr; }
@@ -116,15 +102,20 @@ namespace sSTL
 
         explicit operator bool() { return m_block_ptr == nullptr; }
 
-        ~shared_ptr()
-        {
-            if (m_block_ptr and m_block_ptr->m_count.fetch_sub(1) == 1)
-                delete m_block_ptr;
-        }
+        ~shared_ptr() { clear(); }
 
     private:
         c_block<T>* m_block_ptr {};
         T* m_ptr {};
+
+        void clear()
+        {
+            if (m_block_ptr and m_block_ptr->m_count.fetch_sub(1) == 1)
+            {
+                delete m_block_ptr;
+                delete m_ptr;
+            }
+        }
     };
 }
 
