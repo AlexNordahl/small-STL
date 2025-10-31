@@ -13,6 +13,9 @@ namespace sSTL
     class vector final
     {
     public:
+        using iterator = T*;
+        using const_iterator = const T*;
+
         vector() = default;
 
         vector(std::size_t size)
@@ -100,10 +103,7 @@ namespace sSTL
             allocator.destroy(&m_memory[--m_size]);
         }
 
-        void shrink_to_fit()
-        {
-            reserve(m_size);
-        }
+        void shrink_to_fit() { reserve(m_size); }
 
         void reserve(std::size_t capacity)
         {
@@ -132,6 +132,12 @@ namespace sSTL
                 allocator.destroy(&m_memory[i]);
             m_size = 0;
         }
+
+        iterator begin() { return m_memory; };
+        iterator end() { return (m_memory + m_size); }
+
+        const_iterator cbegin() const { return m_memory; }
+        const_iterator cend() const { return (m_memory + m_size); }
 
         ~vector() 
         { 
