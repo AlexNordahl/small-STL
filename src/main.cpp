@@ -10,8 +10,8 @@
  
 int main() 
 {
-    sSTL::array<int, 5> arr {1, 2, 3, 4, 5};
-    sSTL::printContainer(arr.begin(), arr.end());
-    sSTL::reverse(arr.begin(), arr.end());
-    sSTL::printContainer(arr.begin(), arr.end());
+    sSTL::vector<int> arr {1, 2, 3, 4, 5};
+    sSTL::printContainer(arr.rbegin(), arr.rend());
+    sSTL::reverse(arr.rbegin(), arr.rend());
+    sSTL::printContainer(arr.rbegin(), arr.rend());
 }

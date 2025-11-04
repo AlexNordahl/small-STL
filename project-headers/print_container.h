@@ -12,9 +12,8 @@ namespace sSTL
         while (begin != end)
         {
             std::cout << *begin;
-            if (std::next(begin) != end)
+            if (++begin != end)
                 std::cout << ", ";
-            ++begin;
         }
         std::cout << "]\n";
     }

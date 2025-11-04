@@ -16,7 +16,7 @@ namespace sSTL
     public:
         using iterator = T*;
         using const_iterator = const T*;
-        using reverse_iterator = std::reverse_iterator<iterator>;
+        using reverse_iterator = sSTL::reverse_iterator<iterator>;
         using const_reverse_iterator = const sSTL::reverse_iterator<iterator>;
 
         vector() = default;
@@ -41,17 +41,17 @@ namespace sSTL
                 allocator.construct(&m_memory[i++], item);
         }
         
-        vector(const vector& other)
+        vector(const vector& other) noexcept
         {
             copy_from(other);
         }
         
-        vector(vector&& other)
+        vector(vector&& other) noexcept
         {
             move_from(other);
         }
 
-        vector& operator=(const vector& other)
+        vector& operator=(const vector& other) noexcept
         {
             if (this == &other) 
                 return *this;
@@ -60,7 +60,7 @@ namespace sSTL
             return *this;
         }
 
-        vector& operator=(vector&& other)
+        vector& operator=(vector&& other) noexcept
         {
             free_currrent_memory();
             move_from(other);
