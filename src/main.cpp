@@ -10,9 +10,17 @@ int main()
 {
     sSTL::array<int, 5> arr {1, 2, 3, 4, 5};
 
-    for (auto it {arr.rbegin()}; *it != *arr.rend(); ++it)
+    for (auto it {arr.rbegin()}; it != arr.rend(); ++it)
     {
         std::cout << *it << " ";
     }
-    std::cout << "\n";    
+    std::cout << "\n";
+    
+    sSTL::array<int, 5> arr2 {1, 2, 3, 4, 5};
+    auto rIt = arr2.rbegin();
+    std::cout << *rIt << "\n";
+    rIt += 3;
+    std::cout << *rIt << "\n";
+    rIt -= 3;
+    std::cout << *rIt << "\n";
 }

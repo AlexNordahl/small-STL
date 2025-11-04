@@ -14,6 +14,7 @@ namespace sSTL
         using iterator = T*;
         using const_iterator = const T*;
         using reverse_iterator = sSTL::reverse_iterator<iterator>;
+        using const_reverse_iterator = const sSTL::reverse_iterator<iterator>;
 
         T m_array[N];
 
@@ -47,12 +48,13 @@ namespace sSTL
 
         iterator begin() { return m_array; }
         iterator end() { return (m_array + N); }
-
         reverse_iterator rbegin() { return {end() - 1}; }
         reverse_iterator rend() { return {begin() - 1}; }
 
         const_iterator cbegin() const { return m_array; }
         const_iterator cend() const { return (m_array + N); }
+        const_reverse_iterator crbegin() const { return {end() - 1}; }
+        const_reverse_iterator crend() const { return {begin() - 1}; }
 
         void fill(T value)
         {

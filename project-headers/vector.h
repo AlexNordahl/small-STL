@@ -1,6 +1,7 @@
 #ifndef SMALL_STL_VECTOR
 #define SMALL_STL_VECTOR
 
+#include "iterator.h"
 #include <memory>
 #include <initializer_list>
 #include <utility>
@@ -15,6 +16,8 @@ namespace sSTL
     public:
         using iterator = T*;
         using const_iterator = const T*;
+        using reverse_iterator = std::reverse_iterator<iterator>;
+        using const_reverse_iterator = const sSTL::reverse_iterator<iterator>;
 
         vector() = default;
 
@@ -135,9 +138,13 @@ namespace sSTL
 
         iterator begin() { return m_memory; };
         iterator end() { return (m_memory + m_size); }
+        reverse_iterator rbegin() { return {end() - 1}; };
+        reverse_iterator rend() { return {begin() - 1}; }
 
         const_iterator cbegin() const { return m_memory; }
         const_iterator cend() const { return (m_memory + m_size); }
+        const_reverse_iterator crbegin() const { return {end() - 1}; }
+        const_reverse_iterator crend() const { return {begin() - 1}; }
 
         ~vector() 
         { 
@@ -192,9 +199,7 @@ namespace sSTL
         }
 
         std::size_t max_size() const { return 1'000'000; }
-
         std::size_t growth_rate() const { return 2; }
-
     };
 }
 
