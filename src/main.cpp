@@ -8,19 +8,11 @@
  
 int main() 
 {
-    sSTL::vector<int> vec {1, 2, 3, 4, 5};
-
-    for (auto it {vec.begin()}; it != vec.end(); ++it)
-    {
-        std::cout << *it << " ";
-    }
-    std::cout << "\n";
-
     sSTL::array<int, 5> arr {1, 2, 3, 4, 5};
 
-    for (auto it {arr.begin()}; it != arr.end(); ++it)
+    for (auto it {arr.rbegin()}; *it != *arr.rend(); ++it)
     {
         std::cout << *it << " ";
     }
-    std::cout << "\n";
+    std::cout << "\n";    
 }
