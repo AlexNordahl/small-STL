@@ -27,10 +27,10 @@ namespace sSTL
         
         friend bool operator== (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() == right.base(); }
         friend bool operator!= (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() != right.base(); }
-        friend bool operator< (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() < right.base(); }
-        friend bool operator<= (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() <= right.base(); }
-        friend bool operator> (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() > right.base(); }
-        friend bool operator>= (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() >= right.base(); }
+        friend bool operator< (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() > right.base(); }
+        friend bool operator<= (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() >= right.base(); }
+        friend bool operator> (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() < right.base(); }
+        friend bool operator>= (const reverse_iterator<It>& left, const reverse_iterator<It>& right) { return left.base() <= right.base(); }
 
     private:
         It current = It();
