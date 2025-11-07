@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include "../project-headers/pair.h"
 #include "../project-headers/print_container.h"
 #include "../project-headers/algorithm.h"
 #include "../project-headers/vector.h"
@@ -10,8 +11,8 @@
  
 int main() 
 {
-    sSTL::vector<int> arr {1, 2, 3, 4, 5};
-    sSTL::printContainer(arr.rbegin(), arr.rend());
-    sSTL::reverse(arr.rbegin(), arr.rend());
-    sSTL::printContainer(arr.rbegin(), arr.rend());
+    sSTL::vector<int> vec {1, 2, 3, 4, 5};
+
+    sSTL::print_container(vec.begin(), vec.end());
+    sSTL::print_container(vec.rbegin(), vec.rend());
 }

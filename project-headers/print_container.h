@@ -6,7 +6,7 @@
 namespace sSTL
 {
     template<typename It>
-    void printContainer(It begin, It end)
+    void print_container(It begin, It end)
     {
         std::cout << "[";
         while (begin != end)
