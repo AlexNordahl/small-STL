@@ -8,14 +8,13 @@ namespace sSTL
     {
         if (begin == end)
             return;
-
+            
         --end;
-        while (begin != end)
+        while (begin < end) 
         {
-            auto temp = *begin;
+            auto tmp = *begin;
             *begin = *end;
-            *end = temp;
-
+            *end = tmp;
             ++begin;
             --end;
         }
