@@ -9,18 +9,18 @@ namespace sSTL
     class unique_ptr
     {
     public:
-        unique_ptr(T* resource = nullptr) { m_resource = resource; }
+        explicit unique_ptr(T* resource = nullptr) noexcept { m_resource = resource; }
 
         unique_ptr(const unique_ptr&) = delete;
         unique_ptr& operator=(const unique_ptr&) = delete;
 
-        unique_ptr(unique_ptr&& other)
+        unique_ptr(unique_ptr&& other) noexcept
         {
             m_resource = other.m_resource;
             other.m_resource = nullptr;
         }
 
-        unique_ptr& operator= (unique_ptr&& other)
+        unique_ptr& operator= (unique_ptr&& other) noexcept
         {
             if (this == &other)
                 return *this;
@@ -33,24 +33,27 @@ namespace sSTL
             return *this;
         }
 
-        T* release()
+        T* release() noexcept
         {
             T* temp = m_resource;
             m_resource = nullptr;
             return temp;
         }
 
-        void reset(T* resource = nullptr)
+        void reset(T* resource = nullptr) noexcept
         {
+            if (resource == m_resource)
+                return;
+            
             clear();
             m_resource = resource;
         }
         
-        T* get() { return m_resource; }
+        T* get() noexcept { return m_resource; }
         
-        bool isHolding() { return get() != nullptr;}
+        bool isHolding() noexcept { return get() != nullptr;}
         
-        explicit operator bool() { return isHolding(); }
+        explicit operator bool() noexcept { return isHolding(); }
         
         T& operator* () { return *m_resource; }
         T* operator-> () { return m_resource; }
@@ -72,12 +75,12 @@ namespace sSTL
     class unique_ptr<T[], Deleter>
     {
     public:
-        unique_ptr(T* resource = nullptr) { m_resource = resource; }
+        explicit unique_ptr(T* resource = nullptr) noexcept { m_resource = resource; }
 
         unique_ptr(const unique_ptr&) = delete;
         unique_ptr& operator=(const unique_ptr&) = delete;
 
-        unique_ptr(unique_ptr&& other)
+        unique_ptr(unique_ptr&& other) noexcept
         {
             m_resource = other.m_resource;
             other.m_resource = nullptr;
@@ -96,27 +99,28 @@ namespace sSTL
             return *this;
         }
 
-        T* release()
+        T* release() noexcept
         {
             T* temp = m_resource;
             m_resource = nullptr;
             return temp;
         }
 
-        void reset(T* resource = nullptr)
+        void reset(T* resource = nullptr) noexcept
         {
+            if (resource == m_resource)
+                return;
+
             clear();
             m_resource = resource;
         }
         
-        T* get() { return m_resource; }
+        T* get() noexcept { return m_resource; }
         
-        bool isHolding() { return get() != nullptr;}
+        bool isHolding() noexcept { return get() != nullptr;}
         
-        explicit operator bool() { return isHolding(); }
+        explicit operator bool() noexcept { return isHolding(); }
         
-        T& operator* () { return *m_resource; }
-        T* operator-> () { return m_resource; }
         T& operator[] (int index) { return m_resource[index]; }
 
         ~unique_ptr() { clear(); }
