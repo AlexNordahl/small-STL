@@ -29,7 +29,7 @@ if (BUILD_TESTS)
 endif()
 
 add_executable(main
-    src/main.cpp
+    example/main.cpp
 )
 
 target_compile_features(main PRIVATE cxx_std_17)

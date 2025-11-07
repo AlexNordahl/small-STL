@@ -1,4 +1,4 @@
-#include "../project-headers/array.h"
+#include "../small-STL-headers/array.h"
 #include <gtest/gtest.h>
 #include <string>
 #include <stdexcept>

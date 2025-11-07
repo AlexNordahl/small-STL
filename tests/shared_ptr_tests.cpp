@@ -1,4 +1,4 @@
-#include "../project-headers/shared_ptr.h"
+#include "../small-STL-headers/shared_ptr.h"
 #include <gtest/gtest.h>
 #include <string>
 
