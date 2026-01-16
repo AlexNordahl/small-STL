@@ -41,17 +41,17 @@ namespace sSTL
                 allocator.construct(&m_memory[i++], item);
         }
         
-        vector(const vector& other) noexcept
+        vector(const vector& other)
         {
             copy_from(other);
         }
         
-        vector(vector&& other) noexcept
+        vector(vector&& other)
         {
             move_from(other);
         }
 
-        vector& operator=(const vector& other) noexcept
+        vector& operator=(const vector& other)
         {
             if (this == &other) 
                 return *this;
@@ -60,7 +60,7 @@ namespace sSTL
             return *this;
         }
 
-        vector& operator=(vector&& other) noexcept
+        vector& operator=(vector&& other)
         {
             free_currrent_memory();
             move_from(other);
