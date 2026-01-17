@@ -46,7 +46,7 @@ namespace sSTL
             copy_from(other);
         }
         
-        vector(vector&& other)
+        vector(vector&& other) noexcept
         {
             move_from(other);
         }
@@ -60,8 +60,11 @@ namespace sSTL
             return *this;
         }
 
-        vector& operator=(vector&& other)
+        vector& operator=(vector&& other) noexcept
         {
+            if (this == &other) 
+                return *this;
+
             free_currrent_memory();
             move_from(other);
 
@@ -146,7 +149,7 @@ namespace sSTL
         const_reverse_iterator crbegin() const { return {end() - 1}; }
         const_reverse_iterator crend() const { return {begin() - 1}; }
 
-        ~vector() 
+        ~vector() // implicit noexcept
         { 
             Allocator allocator;
             for (std::size_t i {}; i < m_size; ++i)
