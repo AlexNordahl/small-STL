@@ -9,14 +9,13 @@
 namespace sSTL
 {
     template<typename T, std::size_t N>
-    struct array final
+    class array
     {
+    public:
         using iterator = T*;
         using const_iterator = const T*;
         using reverse_iterator = sSTL::reverse_iterator<iterator>;
         using const_reverse_iterator = const sSTL::reverse_iterator<iterator>;
-
-        T m_array[N];
 
         T& at(std::size_t index)
         {
@@ -61,6 +60,9 @@ namespace sSTL
             for (std::size_t i {}; i < N; ++i)
                 m_array[i] = value;
         }
+
+    private:
+        T m_array[N];
     };
 }
 
